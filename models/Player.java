@@ -10,7 +10,7 @@ public class Player {
     }
 
     public void increaseScore() {
-        this.score++;
+        this.score += 0;
     }
 
     public String getName() { return name; }
