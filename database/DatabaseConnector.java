@@ -31,7 +31,7 @@ public class DatabaseConnector {
         StringBuilder result = new StringBuilder("Top Scores:\n");
         try (Connection conn = connect()) {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("SELECT player, score FROM scores ORDER BY score DESC LIMIT 5");
+            ResultSet rs = stmt.executeQuery("SELECT player, score FROM scores ORDER BY score DESC LIMIT 3");
             int rank = 1;
             while (rs.next()) {
                 String name = rs.getString("player");
