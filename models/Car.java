@@ -15,7 +15,7 @@ public class Car {
         y += dy;
 
         int minX = screenWidth / 10;
-        int maxX = screenWidth * 9 / 10 - width;
+        int maxX = screenWidth * 8 / 10 - width;
         int minY = 0;
         int maxY = screenHeight - height;
 
