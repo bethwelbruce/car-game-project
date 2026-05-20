@@ -26,10 +26,13 @@ public class TestRunner {
     }
 
     public static void main(String[] args) {
+        System.out.println("=== CarGame Test Suite ===\n");
         PlayerTest.run();
         CarTest.run();
         TrafficCarTest.run();
         DatabaseTest.run();
+        BonusTest.run();
+        GameStateTest.run();
 
         System.out.println("\n=== Results: " + passed + " passed, " + failed + " failed ===");
         System.exit(failed > 0 ? 1 : 0);
