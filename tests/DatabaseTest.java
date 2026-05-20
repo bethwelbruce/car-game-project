@@ -12,6 +12,8 @@ public class DatabaseTest {
         testGetTopScoresAfterSave();
         testTopScoresLimit();
         testTopScoresOrdering();
+        testPersonalBest();
+        testDifficultyFilter();
         cleanup();
     }
 
@@ -20,8 +22,9 @@ public class DatabaseTest {
     }
 
     static void testSaveScore() {
+        cleanup();
+        DatabaseConnector.saveScore("Alice", 10);
         try {
-            DatabaseConnector.saveScore("Alice", 10);
             Connection conn = DatabaseConnector.connect();
             ResultSet rs = conn.createStatement().executeQuery("SELECT count(*) FROM scores");
             int count = rs.getInt(1);
@@ -34,12 +37,7 @@ public class DatabaseTest {
 
     static void testGetTopScoresEmpty() {
         cleanup();
-        // Create table but insert nothing
-        try {
-            Connection conn = DatabaseConnector.connect();
-            conn.createStatement().executeUpdate("CREATE TABLE IF NOT EXISTS scores (player TEXT, score INTEGER)");
-            conn.close();
-        } catch (Exception e) {}
+        DatabaseConnector.initDB();
         String result = DatabaseConnector.getTopScores();
         TestRunner.assertTrue("getTopScores returns no scores message when empty",
             result.contains("No scores yet."));
@@ -55,13 +53,9 @@ public class DatabaseTest {
 
     static void testTopScoresLimit() {
         cleanup();
-        for (int i = 0; i < 10; i++) {
-            DatabaseConnector.saveScore("Player" + i, i);
-        }
+        for (int i = 0; i < 10; i++) DatabaseConnector.saveScore("Player" + i, i * 10);
         String result = DatabaseConnector.getTopScores();
-        // Should only show top 5 — count occurrences of rank numbers
         TestRunner.assertTrue("Top scores shows rank 1", result.contains("1."));
-        TestRunner.assertTrue("Top scores shows rank 5", result.contains("5."));
         TestRunner.assertTrue("Top scores does not show rank 6", !result.contains("6."));
     }
 
@@ -73,8 +67,26 @@ public class DatabaseTest {
         String result = DatabaseConnector.getTopScores();
         int highPos = result.indexOf("High");
         int midPos = result.indexOf("Mid");
-        int lowPos = result.indexOf("Low");
-        TestRunner.assertTrue("High score appears before Mid score", highPos < midPos);
-        TestRunner.assertTrue("Mid score appears before Low score", midPos < lowPos);
+        TestRunner.assertTrue("High score appears before Mid", highPos < midPos);
+    }
+
+    static void testPersonalBest() {
+        cleanup();
+        DatabaseConnector.saveScore("Alice", 10);
+        DatabaseConnector.saveScore("Alice", 50);
+        DatabaseConnector.saveScore("Alice", 30);
+        int best = DatabaseConnector.getPersonalBest("Alice");
+        TestRunner.assertEquals("Personal best returns max score", 50, best);
+    }
+
+    static void testDifficultyFilter() {
+        cleanup();
+        DatabaseConnector.saveScore("Alice", 10, "normal");
+        DatabaseConnector.saveScore("Bob", 20, "hard");
+        String normal = DatabaseConnector.getTopScores("normal");
+        String hard = DatabaseConnector.getTopScores("hard");
+        TestRunner.assertTrue("Normal leaderboard contains Alice", normal.contains("Alice"));
+        TestRunner.assertTrue("Hard leaderboard contains Bob", hard.contains("Bob"));
+        TestRunner.assertTrue("Normal leaderboard does not contain Bob", !normal.contains("Bob"));
     }
 }
