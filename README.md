@@ -75,3 +75,32 @@ java -cp ".:sqlite-jdbc-3.50.2.0.jar" tests.TestRunner
 ## Leaderboard
 
 After each game, your score is saved to a local SQLite database (`car_game.db`). The top 5 scores are shown at game over.
+
+---
+
+## Changelog
+
+### v1.3 (Aug 2025)
+- Added `GameState` model to centralise phase management
+- Added `Bonus` model with SCORE, SHIELD, EXTRA_LIFE types
+- Expanded test suite to cover new models
+
+### v1.2 (Jul 2025)
+- Added difficulty system (normal / hard) to Player
+- Added lives mechanic — lose a life on collision
+- Added truck variant to TrafficCar with lower speed
+- Added shield powerup to Car
+- Refactored Server with full command protocol (NAME, SCORE, STATUS, LEADERBOARD)
+- Implemented GameManager with live leaderboard and concurrent player tracking
+- Added `clearScores()` and `getPersonalBest()` to DatabaseConnector
+- Added difficulty filter to leaderboard queries
+
+### v1.1 (Jul 2025)
+- Added unit tests for all models and database layer
+- Added Dockerfile for containerised builds
+
+### v1.0 (Jul 2025)
+- Initial release: Car, Player, TrafficCar models
+- SQLite leaderboard
+- Basic socket server
+- Swing game UI
