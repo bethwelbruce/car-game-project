@@ -4,6 +4,9 @@ public class Car {
     private int x, y;
     private final int width = 50;
     private final int height = 30;
+    private boolean shielded = false;
+    private int shieldTimer = 0;
+    private static final int SHIELD_DURATION = 100;
 
     public Car(int x, int y) {
         this.x = x;
@@ -25,6 +28,19 @@ public class Car {
         if (y > maxY) y = maxY;
     }
 
+    public void activateShield() {
+        this.shielded = true;
+        this.shieldTimer = SHIELD_DURATION;
+    }
+
+    public void tickShield() {
+        if (shielded && --shieldTimer <= 0) {
+            shielded = false;
+            shieldTimer = 0;
+        }
+    }
+
+    public boolean isShielded() { return shielded; }
     public int getX() { return x; }
     public int getY() { return y; }
     public int getWidth() { return width; }
